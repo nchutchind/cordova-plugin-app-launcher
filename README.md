@@ -107,6 +107,8 @@ Launch NASA TV video stream in MxPlayer Free (**Android**)
 ```
 
 ## 4. Changelog
+0.1.1: Added ability to launch a package with a data uri and datatype on Android.
+
 0.1.0: initial version supporting Android and iOS
 
 ## 5. License

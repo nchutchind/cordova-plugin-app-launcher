@@ -77,24 +77,33 @@ or to use a specific version:
 	}
 ```
 
-Check to see if Facebook can be launched via uri (iOS and Android)
+Check to see if Facebook can be launched via uri (**iOS** and **Android**)
 ```javascript
 	window.plugins.launcher.canLaunch({uri:'fb://'}, successCallback, errorCallback);
 ```
 
-Check to see if Facebook can is installed (Android)
+Check to see if Facebook can is installed (**Android**)
 ```javascript
 	window.plugins.launcher.canLaunch({packageName:'com.facebook.katana'}, successCallback, errorCallback);
 ```
 
-Launch Facebook to the logged in user's profile (iOS and Android)
+Launch Facebook to the logged in user's profile (**iOS** and **Android**)
 ```javascript
 	window.plugins.launcher.canLaunch({uri:'fb://profile'}, successCallback, errorCallback);
 ```
 
-Launch Facebook via package id (Android)
+Launch Facebook via package id (**Android**)
 ```javascript
 	window.plugins.launcher.launch({packageName:'com.facebook.katana'}, successCallback, errorCallback);
+```
+
+Launch NASA TV video stream in MxPlayer Free (**Android**)
+```javascript
+	window.plugins.launcher.launch({
+		packageName:'com.mxtech.videoplayer.ad',
+		uri:'http://www.nasa.gov/multimedia/nasatv/NTV-Public-IPS.m3u8',
+		dataType:'application/x-mpegURL'
+	}, successCallback, errorCallback);
 ```
 
 ## 4. Changelog

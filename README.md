@@ -5,9 +5,10 @@ Simple Cordova plugin to see if other apps are installed and launch them.
 
 ## 0. Index
 1. [Description](#1-description)
-2. [Usage](#2-usage)
-3. [Changelog](#3-changelog)
-4. [License](#4-license)
+2. [Installation](#2-installation)
+3. [Usage](#3-usage)
+4. [Changelog](#4-changelog)
+5. [License](#5-license)
 
 ## 1. Description
 
@@ -17,7 +18,55 @@ This plugin allows you to check if an app is installed that can handle a specifi
 * (Android) Check if an app is installed via its package id.
 * (Android) Launch an app via its package id.
 
-## 2. Usage
+## 2. Installation
+
+### Automatically (CLI / Plugman)
+
+```
+$ cordova plugin add https://github.com/nchutchind/App-Launcher-Cordova-Plugin.git
+```
+and then (this step will modify your project):
+```
+$ cordova prepare
+```
+
+1\. Add the following xml to your `config.xml`:
+```xml
+<!-- for iOS -->
+<feature name="Launcher">
+	<param name="ios-package" value="Launcher" />
+</feature>
+```
+```xml
+<!-- for Android -->
+<feature name="Launcher">
+	<param name="android-package" value="com.hutchind.cordova.plugins.Launcher" />
+</feature>
+```
+
+2\. Add `www/Launcher.js` to your project and reference it in `index.html`:
+```html
+<script type="text/javascript" src="js/Launcher.js"></script>
+```
+
+3\. Copy the files in `src/` for iOS and/or Android into your project.
+
+iOS: Copy `Launcher.h` and `Launcher.m` to `platforms/ios/<ProjectName>/Plugins`
+
+Android: Copy `Launcher.java` to `platforms/android/src/com/hutchind/cordova/plugins` (you will probably need to create this path)
+
+### PhoneGap Build
+
+Add the following xml to your `config.xml` to always use the latest version of this plugin:
+```xml
+<gap:plugin name="com.hutchind.cordova.plugins.launcher" />
+```
+or to use a specific version:
+```xml
+<gap:plugin name="com.hutchind.cordova.plugins.launcher" version="0.1.0" />
+```
+
+## 3. Usage
 ```javascript
 	// Default handlers
 	var successCallback = function() {
@@ -48,10 +97,10 @@ Launch Facebook via package id (Android)
 	window.plugins.launcher.launch({packageName:'com.facebook.katana'}, successCallback, errorCallback);
 ```
 
-## 3. Changelog
+## 4. Changelog
 0.1.0: initial version supporting Android and iOS
 
-## 4. License
+## 5. License
 
 [The MIT License (MIT)](http://www.opensource.org/licenses/mit-license.html)
 

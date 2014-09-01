@@ -103,7 +103,14 @@ public class Launcher extends CordovaPlugin {
 
 	private boolean launch(JSONArray args) throws JSONException {
 		final JSONObject options = args.getJSONObject(0);
-		if (options.has("packageName")) {
+		if (options.has("packageName") && options.has("uri")) {
+			String dataType = null;
+			if (options.has("dataType")) {
+				dataType = options.getString("dataType");
+			}
+			launchAppWithData(options.getString("packageName"), options.getString("uri"), dataType);
+			return true;
+		} else if (options.has("packageName")) {
 			launchApp(options.getString("packageName"));
 			return true;
 		} else if (options.has("uri")) {
@@ -111,6 +118,24 @@ public class Launcher extends CordovaPlugin {
 			return true;
 		}
 		return false;
+	}
+
+	private void launchAppWithData(final String packageName, final String uri, final String dataType) throws JSONException {
+		final CordovaInterface mycordova = cordova;
+		final CordovaPlugin plugin = this;
+		cordova.getThreadPool().execute(new LauncherRunnable(this.callback) {
+			public void run() {
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				if (dataType != null) {
+					intent.setDataAndType(Uri.parse(uri), dataType);
+				} else {
+					intent.setData(Uri.parse(uri));
+				}
+				intent.setPackage(packageName);
+				mycordova.startActivityForResult(plugin, intent, 0);
+				callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+			}
+		});
 	}
 
 	private void launchApp(final String packageName) {

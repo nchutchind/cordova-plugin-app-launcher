@@ -76,9 +76,16 @@ public class Launcher extends CordovaPlugin {
 			});
 		} else if (options.has("uri")) {
 			final String uri = options.getString("uri");
+			final String dataType = options.has("dataType") ? options.getString("dataType") : null;
+
 			cordova.getThreadPool().execute(new LauncherRunnable(this.callback) {
 				public void run() {
-					final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+					final Intent intent = new Intent(Intent.ACTION_VIEW);
+					if (dataType != null) {
+						intent.setDataAndType(Uri.parse(uri), dataType);
+					} else {
+						intent.setData(Uri.parse(uri));
+					}
 					if (mycordova.getActivity().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
 						callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
 					} else {
@@ -103,12 +110,16 @@ public class Launcher extends CordovaPlugin {
 
 	private boolean launch(JSONArray args) throws JSONException {
 		final JSONObject options = args.getJSONObject(0);
-		if (options.has("packageName") && options.has("uri")) {
+		if (options.has("uri") && (options.has("packageName") || options.has("dataType"))) {
 			String dataType = null;
+			String packageName = null;
+			if (options.has("packageName")) {
+				packageName = options.getString("packageName");
+			}
 			if (options.has("dataType")) {
 				dataType = options.getString("dataType");
 			}
-			launchAppWithData(options.getString("packageName"), options.getString("uri"), dataType);
+			launchAppWithData(packageName, options.getString("uri"), dataType);
 			return true;
 		} else if (options.has("packageName")) {
 			launchApp(options.getString("packageName"));
@@ -131,9 +142,20 @@ public class Launcher extends CordovaPlugin {
 				} else {
 					intent.setData(Uri.parse(uri));
 				}
-				intent.setPackage(packageName);
-				mycordova.startActivityForResult(plugin, intent, 0);
-				callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+
+				if (packageName != null && !packageName.equals("")) {
+					intent.setPackage(packageName);
+				}
+
+				try {
+					mycordova.startActivityForResult(plugin, intent, 0);
+					callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
+				} catch(ActivityNotFoundException e) {
+					Log.e(TAG, "Error: No applications installed that can handle uri " + uri);
+					e.printStackTrace();
+					callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "Application not found."));
+				}
+
 			}
 		});
 	}

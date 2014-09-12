@@ -82,7 +82,7 @@ Check to see if Facebook can be launched via uri (**iOS** and **Android**)
 	window.plugins.launcher.canLaunch({uri:'fb://'}, successCallback, errorCallback);
 ```
 
-Check to see if Facebook can is installed (**Android**)
+Check to see if Facebook is installed (**Android**)
 ```javascript
 	window.plugins.launcher.canLaunch({packageName:'com.facebook.katana'}, successCallback, errorCallback);
 ```
@@ -97,6 +97,14 @@ Launch Facebook via package id (**Android**)
 	window.plugins.launcher.launch({packageName:'com.facebook.katana'}, successCallback, errorCallback);
 ```
 
+Check to see if an app is installed that can play NASA TV (**Android**)
+```javascript
+	window.plugins.launcher.canLaunch({
+		uri:'http://www.nasa.gov/multimedia/nasatv/NTV-Public-IPS.m3u8',
+		dataType:'application/x-mpegURL'
+	}, successCallback, errorCallback);
+```
+
 Launch NASA TV video stream in MxPlayer Free (**Android**)
 ```javascript
 	window.plugins.launcher.launch({
@@ -107,6 +115,8 @@ Launch NASA TV video stream in MxPlayer Free (**Android**)
 ```
 
 ## 4. Changelog
+0.1.2: Added ability to check if any apps are installed that can handle a certain datatype on Android.
+
 0.1.1: Added ability to launch a package with a data uri and datatype on Android.
 
 0.1.0: initial version supporting Android and iOS

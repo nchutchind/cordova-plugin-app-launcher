@@ -39,6 +39,6 @@
 						<param name="android-package" value="com.hutchind.cordova.plugins.Launcher" />
 				</feature>
 			</config-file>
-			<source-file src="src/android/Launcher.java" target-dir="src/com/hutchind/cordova/plugins/launcher" />
+			<source-file src="src/android/Launcher.java" target-dir="src/com/hutchind/cordova/plugins" />
 	</platform>
 </plugin>

@@ -8,7 +8,8 @@ Simple Cordova plugin to see if other apps are installed and launch them.
 2. [Installation](#2-installation)
 3. [Usage](#3-usage)
 4. [Changelog](#4-changelog)
-5. [License](#5-license)
+5. [Credits](#5-credits)
+6. [License](#6-license)
 
 ## 1. Description
 
@@ -17,6 +18,8 @@ This plugin allows you to check if an app is installed that can handle a specifi
 * (iOS, Android) Launch an app via a specified uri.
 * (Android) Check if an app is installed via its package id.
 * (Android) Launch an app via its package id.
+* (Android) Launch an app with extras included.
+* (Android) Return results from a launched app once it is finished.
 
 ## 2. Installation
 
@@ -40,7 +43,7 @@ $ cordova prepare
 ```xml
 <!-- for Android -->
 <feature name="Launcher">
-	<param name="android-package" value="com.hutchind.cordova.plugins.Launcher" />
+	<param name="android-package" value="com.hutchind.cordova.plugins.launcher.Launcher" />
 </feature>
 ```
 
@@ -63,7 +66,7 @@ Add the following xml to your `config.xml` to always use the latest version of t
 ```
 or to use a specific version:
 ```xml
-<gap:plugin name="com.hutchind.cordova.plugins.launcher" version="0.1.0" />
+<gap:plugin name="com.hutchind.cordova.plugins.launcher" version="0.2.0" />
 ```
 
 ## 3. Usage
@@ -114,14 +117,143 @@ Launch NASA TV video stream in MxPlayer Free (**Android**)
 	}, successCallback, errorCallback);
 ```
 
+Launch MxPlayer Free with Extras for specific videos from the sdcard, specific titles, and starting at 3 seconds in (**Android**)
+```javascript
+	var sdcard = "file:///sdcard/";
+	var file1 = sdcard + "video1.mp4", file2 = sdcard + "video2.mp4";
+
+	window.plugins.launcher.launch({
+		packageName:'com.mxtech.videoplayer.ad',
+		uri:file1,
+		dataType:'video/*'
+		extras: [
+			{"name":"video_list", "value":[file1,file2], "dataType":"ParcelableArray", "paType":"Uri"},
+			{"name":"video_list.name", "value":["Awesome Video","Sweet Title"], "dataType":"StringArray"},
+			{"name":"position", "value":3000, "dataType":"int"}
+		]
+	}, successCallback, errorCallback);
+```
+Launch MxPlayer Free with Extras for a specific video with title and return results (**Android**)
+```javascript
+	var filename = "file:///sdcard/video.mp4";
+
+	window.plugins.launcher.launch({
+		packageName:'com.mxtech.videoplayer.ad',
+		uri:filename,
+		dataType:'video/*',
+		extras: [
+			{"name":"video_list", "value":[filename], "dataType":"ParcelableArray", "paType":"Uri"},
+			{"name":"video_list.name", "value":["Whatever Title You Want"], "dataType":"StringArray"},
+			{"name":"return_result", "value":true, "dataType":"Boolean"}
+		],
+		successCallback: function(json) {
+			if (json.isActivityDone) {
+				if (json.extras && json.extras.end_by) {
+					if (json.data) {
+						alert("MxPlayer stopped while on video: " + json.data);
+					}
+					if (json.extras.end_by == "user") {
+						// MxPlayer stopped because the User quit
+						alert("User watched " + json.extras.position + " of " + json.extras.duration + " before quitting.");
+					} else {
+						alert("MxPlayer finished playing video without user quitting.");
+					}
+				} else {
+					alert("Playback finished, but we have no results from MxPlayer.");
+				}
+			} else {
+				console.log("MxPlayer launched");
+			}
+		},
+		errorCallback: function(err) {
+			alert("There was an error launching MxPlayer.")
+		}
+	});
+```
+# Extras Data Types
+
+Most datatypes that can be put into an Android Bundle are able to be passed in. You must provide the datatype to convert to.
+Only Uri Parcelables are supported currently.
+```javascript
+	extras: [
+		{"name":"myByte", "value":1, "dataType":"Byte"},
+		{"name":"myByteArray", "value":[1,0,2,3], "dataType":"ByteArray"},
+		{"name":"myShort", "value":5, "dataType":"Short"},
+		{"name":"myShortArray", "value":[1,2,3,4], "dataType":"ShortArray"},
+		{"name":"myInt", "value":2000, "dataType":"Int"},
+		{"name":"myIntArray", "value":[12,34,56], "dataType":"IntArray"},
+		{"name":"myIntArrayList", "value":[123,456,789], "dataType":"IntArrayList"},
+		{"name":"myLong", "value":123456789101112, "dataType":"Long"},
+		{"name":"myLongArray", "value":[123456789101112,121110987654321], "dataType":"LongArray"},
+		{"name":"myFloat", "value":12.34, "dataType":"Float"},
+		{"name":"myFloatArray", "value":[12.34,56.78], "dataType":"FloatArray"},
+		{"name":"myDouble", "value":12.3456789, "dataType":"Double"},
+		{"name":"myDoubleArray", "value":[12.3456789, 98.7654321], "dataType":"DoubleArray"},
+		{"name":"myBoolean", "value":false, "dataType":"Boolean"},
+		{"name":"myBooleanArray", "value":[true,false,true], "dataType":"BooleanArray"},
+		{"name":"myString", "value":"this is a test", "dataType":"String"},
+		{"name":"myStringArray", "value":["this","is", "a", "test"], "dataType":"StringArray"},
+		{"name":"myStringArrayList", "value":["this","is","a","test"], "dataType":"StringArrayList"},
+		{"name":"myChar", "value":"T", "dataType":"Char"},
+		{"name":"myCharArray", "value":"this is a test", "dataType":"CharArray"},
+		{"name":"myCharSequence", "value":"this is a test", "dataType":"CharSequence"},
+		{"name":"myCharSequenceArray", "value":["this","is a", "test"], "dataType":"CharSequenceArray"},
+		{"name":"myCharSequenceArrayList", "value":["this","is a", "test"], "dataType":"CharSequenceArrayList"},
+		{"name":"myParcelable", "value":"http://foo", "dataType":"Parcelable", "paType":"Uri"},
+		{"name":"myParcelableArray", "value":["http://foo","http://bar"], "dataType":"ParcelableArray", "paType":"Uri"},
+		{"name":"myParcelableArrayList", "value":["http://foo","http://bar"], "dataType":"ParcelableArrayList", "paType":"Uri"},
+		{"name":"mySparseParcelableArray", "value":{"10":"http://foo", "-25":"http://bar"}, "dataType":"SparseParcelableArray", "paType":"Uri"},
+	]
+```
+
+#### Launcher.canLaunch Success Callback
+No data is passed.
+
+#### Launcher.canLaunch Error Callback
+Passes a string containing an error message.
+
+#### Launcher.launch Success Callback Data
+Passes a JSON object with varying parts.
+
+Activity launched
+```javascript
+	{
+		isLaunched: true
+	}
+```
+
+Activity finished
+```javascript
+	{
+		isActivityDone: true
+	}
+```
+
+Activity launched and data returned
+```javascript
+	{
+		isActivityDone: true,
+		data: <Uri returned from Activity, if any>,
+		extras <JSON object containing data returned from Activity, if any>
+	}
+```
+
+#### Launcher.launch Error Callback Data
+Passes an error message as a string.
+
 ## 4. Changelog
+0.2.0: Android: Added ability to launch activity with extras and receive data back from launched app when it is finished.
+
 0.1.2: Added ability to check if any apps are installed that can handle a certain datatype on Android.
 
 0.1.1: Added ability to launch a package with a data uri and datatype on Android.
 
 0.1.0: initial version supporting Android and iOS
 
-## 5. License
+## 5. Credits
+Special thanks to [@michael1t](https://github.com/michael1t) for sponsoring the development of the Extras portion of this plugin.
+
+## 6. License
 
 [The MIT License (MIT)](http://www.opensource.org/licenses/mit-license.html)
 

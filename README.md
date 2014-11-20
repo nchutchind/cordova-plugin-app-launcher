@@ -206,13 +206,13 @@ Only Uri Parcelables are supported currently.
 	]
 ```
 
-# Launcher.canLaunch Success Callback
+#### Launcher.canLaunch Success Callback
 No data is passed.
 
-# Launcher.canLaunch Error Callback
+#### Launcher.canLaunch Error Callback
 Passes a string containing an error message.
 
-# Launcher.launch Success Callback Data
+#### Launcher.launch Success Callback Data
 Passes a JSON object with varying parts.
 
 Activity launched
@@ -238,7 +238,7 @@ Activity launched and data returned
 	}
 ```
 
-# Launcher.launch Error Callback Data
+#### Launcher.launch Error Callback Data
 Passes an error message as a string.
 
 ## 4. Changelog
@@ -251,7 +251,7 @@ Passes an error message as a string.
 0.1.0: initial version supporting Android and iOS
 
 ## 5. Credits
-Special thanks to @michael1t for sponsoring the development of the Extras portion of this plugin.
+Special thanks to [@michael1t](https://github.com/michael1t) for sponsoring the development of the Extras portion of this plugin.
 
 ## 6. License
 

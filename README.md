@@ -72,8 +72,9 @@ or to use a specific version:
 ## 3. Usage
 ```javascript
 	// Default handlers
-	var successCallback = function() {
+	var successCallback = function(data) {
 		alert("Success!");
+		// if calling canLaunch() with getAppList:true, data will contain an array named "appList" with the package names of applications that can handle the uri specified.
 	};
 	var errorCallback = function(errMsg) {
 		alert("Error! " + errMsg);
@@ -92,7 +93,7 @@ Check to see if Facebook is installed (**Android**)
 
 Launch Facebook to the logged in user's profile (**iOS** and **Android**)
 ```javascript
-	window.plugins.launcher.canLaunch({uri:'fb://profile'}, successCallback, errorCallback);
+	window.plugins.launcher.launch({uri:'fb://profile'}, successCallback, errorCallback);
 ```
 
 Launch Facebook via package id (**Android**)
@@ -105,6 +106,15 @@ Check to see if an app is installed that can play NASA TV (**Android**)
 	window.plugins.launcher.canLaunch({
 		uri:'http://www.nasa.gov/multimedia/nasatv/NTV-Public-IPS.m3u8',
 		dataType:'application/x-mpegURL'
+	}, successCallback, errorCallback);
+```
+
+Get a list of installed app packages that can play NASA TV (**Android**)
+```javascript
+	window.plugins.launcher.canLaunch({
+		uri:'http://www.nasa.gov/multimedia/nasatv/NTV-Public-IPS.m3u8',
+		dataType:'application/x-mpegURL',
+		getAppList: true
 	}, successCallback, errorCallback);
 ```
 

@@ -11,12 +11,14 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.Build;
@@ -26,8 +28,10 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashSet;
 
 public class Launcher extends CordovaPlugin {
 	public static final String TAG = "Launcher Plugin";
@@ -97,15 +101,38 @@ public class Launcher extends CordovaPlugin {
 
 			cordova.getThreadPool().execute(new LauncherRunnable(this.callback) {
 				public void run() {
+					final PackageManager pm = plugin.webView.getContext().getPackageManager();
 					final Intent intent = new Intent(Intent.ACTION_VIEW);
 					if (dataType != null) {
 						intent.setDataAndType(Uri.parse(uri), dataType);
 					} else {
 						intent.setData(Uri.parse(uri));
 					}
-					if (mycordova.getActivity().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
+
+					List<ResolveInfo> resInfos = pm.queryIntentActivities(intent, 0);
+					if (resInfos.size() > 0) {
 						Log.d(TAG, "Found Activities that handle uri: " + uri);
-						callbackContext.success();
+						if (options.has("getAppList")) {
+							JSONObject obj = new JSONObject();
+							JSONArray appList = new JSONArray();
+
+							for(ResolveInfo resolveInfo : resInfos) {
+								try {
+									appList.put(resolveInfo.activityInfo.packageName);
+								} catch (Exception e) {
+									//Do Nothing
+								}
+							}
+
+							try {
+								obj.put("appList", wrap(appList));
+							} catch(Exception e) {
+
+							}
+							callbackContext.success(obj);
+						} else {
+							callbackContext.success();
+						}
 					} else {
 						Log.d(TAG, "No Activities found that handle uri: " + uri);
 						callbackContext.error("No application found.");

@@ -3,12 +3,12 @@
 		xmlns="http://apache.org/cordova/ns/plugins/1.0"
 		xmlns:android="http://schemas.android.com/apk/res/android"
 		id="com.hutchind.cordova.plugins.launcher"
-		version="0.2.0">
+		version="0.2.1">
 
 	<name>Launcher</name>
 
 	<description>
-		This plugin allows you to see if other apps are installed and launch them. On Android, you can send extras to the launched Activity and receive result data (if available) as well.
+		This plugin allows you to see if other apps are installed and launch them. On Android, you can send extras to the launched Activity and receive result data (if available), as well as retrieve a list of applications that can open a specified uri.
 	</description>
 
 	<license>MIT</license>

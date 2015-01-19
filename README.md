@@ -66,7 +66,7 @@ Add the following xml to your `config.xml` to always use the latest version of t
 ```
 or to use a specific version:
 ```xml
-<gap:plugin name="com.hutchind.cordova.plugins.launcher" version="0.2.0" />
+<gap:plugin name="com.hutchind.cordova.plugins.launcher" version="0.2.1" />
 ```
 
 ## 3. Usage

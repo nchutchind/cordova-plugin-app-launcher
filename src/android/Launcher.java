@@ -112,7 +112,13 @@ public class Launcher extends CordovaPlugin {
 					List<ResolveInfo> resInfos = pm.queryIntentActivities(intent, 0);
 					if (resInfos.size() > 0) {
 						Log.d(TAG, "Found Activities that handle uri: " + uri);
-						if (options.has("getAppList")) {
+
+						boolean shouldGetAppList = false;
+						try {
+							shouldGetAppList = options.has("getAppList") && options.getBoolean("getAppList") == true;
+						} catch (JSONException e) {}
+
+						if (shouldGetAppList) {
 							JSONObject obj = new JSONObject();
 							JSONArray appList = new JSONArray();
 

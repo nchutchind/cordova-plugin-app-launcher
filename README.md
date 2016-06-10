@@ -39,6 +39,11 @@ $ cordova prepare
 <feature name="Launcher">
 	<param name="ios-package" value="Launcher" />
 </feature>
+<!-- 
+Additionally, for iOS 9+, you may need to install the cordova-plugin-queries-schemes plugin, which will allow whitelisting of what URLs your app will be allowed to launch. 
+
+cordova plugin add cordova-plugin-queries-schemes
+-->
 ```
 ```xml
 <!-- for Android -->
@@ -67,6 +72,15 @@ Add the following xml to your `config.xml` to always use the latest version of t
 or to use a specific version:
 ```xml
 <gap:plugin name="com.hutchind.cordova.plugins.launcher" version="0.2.2" />
+```
+For iOS 9+, the following may need to be added so that the URLs used to launch apps can be whitelisted (in this example, customSchemeName:// and fb:// would have been the URLs registered to the apps we want to be able to launch):
+```xml
+<gap:config-file platform="ios" parent="LSApplicationQueriesSchemes" overwrite="true">
+    <array>
+        <string>customSchemeName</string>
+        <string>fb</string>
+    </array>
+</gap:config-file>
 ```
 
 ## 3. Usage

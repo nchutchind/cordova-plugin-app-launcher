@@ -145,9 +145,29 @@ public class Launcher extends CordovaPlugin {
 					}
 				}
 			});
+		} else if (options.has("actionName")) {
+			canLaunchAction(options.getString("actionName"));
 		}
 
 		return true;
+	}
+
+	private void canLaunchAction(final String actionName) {
+		final CordovaPlugin plugin = this;
+		cordova.getThreadPool().execute(new LauncherRunnable(this.callback) {
+			public void run() {
+				final PackageManager pm = plugin.webView.getContext().getPackageManager();
+				final Intent intent = new Intent(actionName);
+				List<ResolveInfo> resInfos = pm.queryIntentActivities(intent, 0);
+				if (resInfos.size() > 0) {
+					Log.d(TAG, "Found Activity that handles action: " + actionName);
+					callbackContext.success();
+				} else {
+					Log.d(TAG, "No Activity found that handles action: " + actionName);
+					callbackContext.error("No application found.");
+				}
+			}
+		});
 	}
 
 	private ActivityInfo getAppInfo(final Intent intent, final String appPackageName) {
@@ -184,6 +204,9 @@ public class Launcher extends CordovaPlugin {
 			return true;
 		} else if (options.has("uri")) {
 			launchIntent(options.getString("uri"), extras);
+			return true;
+		} else if (options.has("actionName")) {
+			launchAction(options.getString("actionName"), extras);
 			return true;
 		}
 		return false;
@@ -389,6 +412,25 @@ public class Launcher extends CordovaPlugin {
 					Log.e(TAG, "Error: Activity for " + uri + " was not found.");
 					e.printStackTrace();
 					callbackContext.error("Activity not found for uri.");
+				}
+			}
+		});
+	}
+
+	private void launchAction(final String actionName, final Bundle extras) {
+		final CordovaInterface mycordova = cordova;
+		final CordovaPlugin plugin = this;
+		cordova.getThreadPool().execute(new LauncherRunnable(this.callback) {
+			public void run() {
+				Intent intent = new Intent(actionName);
+				try {
+					intent.putExtras(extras);
+					mycordova.startActivityForResult(plugin, intent, LAUNCH_REQUEST);
+					((Launcher) plugin).callbackLaunched();
+				} catch (ActivityNotFoundException e) {
+					Log.e(TAG, "Error: Activity for " + actionName + " was not found.");
+					e.printStackTrace();
+					callbackContext.error("Activity not found for action name.");
 				}
 			}
 		});

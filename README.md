@@ -17,7 +17,9 @@ This plugin allows you to check if an app is installed that can handle a specifi
 * (iOS, Android) Check if any apps are installed that can launch via a specified uri.
 * (iOS, Android) Launch an app via a specified uri.
 * (Android) Check if an app is installed via its package id.
+* (Android) Check if an app is installed for an action name.
 * (Android) Launch an app via its package id.
+* (Android) Launch an app for an action name.
 * (Android) Launch an app with extras included.
 * (Android) Return results from a launched app once it is finished.
 
@@ -76,10 +78,10 @@ or to use a specific version:
 For iOS 9+, the following may need to be added so that the URLs used to launch apps can be whitelisted (in this example, customSchemeName:// and fb:// would have been the URLs registered to the apps we want to be able to launch):
 ```xml
 <gap:config-file platform="ios" parent="LSApplicationQueriesSchemes" overwrite="true">
-    <array>
-        <string>customSchemeName</string>
-        <string>fb</string>
-    </array>
+	<array>
+		<string>customSchemeName</string>
+		<string>fb</string>
+	</array>
 </gap:config-file>
 ```
 
@@ -118,7 +120,7 @@ Launch Facebook via package id (**Android**)
 Check to see if an app is installed that can play NASA TV (**Android**)
 ```javascript
 	window.plugins.launcher.canLaunch({
-		uri:'http://www.nasa.gov/multimedia/nasatv/NTV-Public-IPS.m3u8',
+		uri:'http://nasatv-lh.akamaihd.net/i/NASA_101@319270/master.m3u8',
 		dataType:'application/x-mpegURL'
 	}, successCallback, errorCallback);
 ```
@@ -126,7 +128,7 @@ Check to see if an app is installed that can play NASA TV (**Android**)
 Get a list of installed app packages that can play NASA TV (**Android**)
 ```javascript
 	window.plugins.launcher.canLaunch({
-		uri:'http://www.nasa.gov/multimedia/nasatv/NTV-Public-IPS.m3u8',
+		uri:'http://nasatv-lh.akamaihd.net/i/NASA_101@319270/master.m3u8',
 		dataType:'application/x-mpegURL',
 		getAppList: true
 	}, successCallback, errorCallback);
@@ -136,7 +138,7 @@ Launch NASA TV video stream in MxPlayer Free (**Android**)
 ```javascript
 	window.plugins.launcher.launch({
 		packageName:'com.mxtech.videoplayer.ad',
-		uri:'http://www.nasa.gov/multimedia/nasatv/NTV-Public-IPS.m3u8',
+		uri:'http://nasatv-lh.akamaihd.net/i/NASA_101@319270/master.m3u8',
 		dataType:'application/x-mpegURL'
 	}, successCallback, errorCallback);
 ```
@@ -194,6 +196,68 @@ Launch MxPlayer Free with Extras for a specific video with title and return resu
 		}
 	});
 ```
+
+Check to see if Peek Acuity can be launched via an Action Name (**Android**)
+
+<i>AndroidManifest.xml:</i>
+```xml
+	<activity
+		android:name="org.peekvision.lite.android.visualacuity.VisualAcuityActivity">
+		<intent-filter>
+			<action android:name="org.peekvision.intent.action.TEST_ACUITY"/>
+			<category android:name="android.intent.category.DEFAULT"/>
+		</intent-filter>
+	</activity>
+```
+
+<i>Typescript:</i>
+```typescript
+	let actionName = 'org.peekvision.intent.action.TEST_ACUITY';
+
+	window["plugins"].launcher.canLaunch({actionName: actionName},
+		data => console.log("Peek Acuity can be launched"),
+		errMsg => console.log("Peek Acuity not installed! " + errMsg)
+	);
+```
+
+Launch Peek Acuity via an Action Name with Extras and return results (**Android**)
+```typescript
+	let actionName = 'org.peekvision.intent.action.TEST_ACUITY';
+
+	let extras = [
+	  {"name":"progressionLogMarArray", "value":[1.0,0.8,0.6,0.3,0.1],"dataType":"DoubleArray"},
+	  {"name":"instructions",			"value":"none",		"dataType":"String"},
+	  {"name":"eye",					"value":"left",		"dataType":"String"},
+	  {"name":"beyondOpto",				"value":true,		"dataType":"Boolean"},
+	  {"name":"testDistance",			"value":"4m",		"dataType":"String"},
+	  {"name":"displayResult",			"value":false,		"dataType":"Boolean"},
+	  {"name":"return_result",			"value":true,		"dataType":"Boolean"}
+	];
+
+	window["plugins"].launcher.launch({actionName: actionName, extras: extras},
+		json => {
+			if (json.isActivityDone) {
+				if (json.data) {
+					console.log("data=" + json.data);
+				}
+				if (json.extras) {
+					if (json.extras.logMar) {
+						console.log("logMar=" + json.extras.logMar);
+					}
+					if (json.extras.averageLux) {
+						console.log("averageLux=" + json.extras.averageLux);
+					}
+				} else {
+					console.log("Peek Acuity done but no results");
+				}
+			} else {
+				console.log("Peek Acuity launched");
+			}
+		},
+		errMsg => console.log("Peek Acuity error launching: " + errMsg)
+	 );
+```
+
 # Extras Data Types
 
 Most datatypes that can be put into an Android Bundle are able to be passed in. You must provide the datatype to convert to.

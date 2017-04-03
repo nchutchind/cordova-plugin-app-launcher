@@ -226,12 +226,12 @@ Launch Peek Acuity via an Action Name with Extras and return results (**Android*
 
 	let extras = [
 	  {"name":"progressionLogMarArray", "value":[1.0,0.8,0.6,0.3,0.1],"dataType":"DoubleArray"},
-	  {"name":"instructions",			"value":"none",		"dataType":"String"},
-	  {"name":"eye",				"value":"left",		"dataType":"String"},
-	  {"name":"beyondOpto",				"value":true,		"dataType":"Boolean"},
-	  {"name":"testDistance",			"value":"4m",		"dataType":"String"},
-	  {"name":"displayResult",			"value":false,		"dataType":"Boolean"},
-	  {"name":"return_result",			"value":true,		"dataType":"Boolean"}
+	  {"name":"instructions",	"value":"none",		"dataType":"String"},
+	  {"name":"eye",		"value":"left",		"dataType":"String"},
+	  {"name":"beyondOpto",		"value":true,		"dataType":"Boolean"},
+	  {"name":"testDistance",	"value":"4m",		"dataType":"String"},
+	  {"name":"displayResult",	"value":false,		"dataType":"Boolean"},
+	  {"name":"return_result",	"value":true,		"dataType":"Boolean"}
 	];
 
 	window["plugins"].launcher.launch({actionName: actionName, extras: extras},

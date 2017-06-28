@@ -1,4 +1,4 @@
-App-Launcher-Cordova-Plugin
+cordova-plugin-app-launcher
 ===========================
 
 Simple Cordova plugin to see if other apps are installed and launch them.
@@ -28,7 +28,7 @@ This plugin allows you to check if an app is installed that can handle a specifi
 ### Automatically (CLI / Plugman)
 
 ```
-$ cordova plugin add https://github.com/nchutchind/App-Launcher-Cordova-Plugin.git
+$ cordova plugin add https://github.com/nchutchind/cordova-plugin-app-launcher.git
 ```
 and then (this step will modify your project):
 ```
@@ -65,15 +65,15 @@ iOS: Copy `Launcher.h` and `Launcher.m` to `platforms/ios/<ProjectName>/Plugins`
 
 Android: Copy `Launcher.java` to `platforms/android/src/com/hutchind/cordova/plugins` (you will probably need to create this path)
 
-### PhoneGap Build
+### PhoneGap Build (possibly outdated)
 
 Add the following xml to your `config.xml` to always use the latest version of this plugin:
 ```xml
-<gap:plugin name="com.hutchind.cordova.plugins.launcher" />
+<gap:plugin name="cordova-plugin-app-launcher" />
 ```
 or to use a specific version:
 ```xml
-<gap:plugin name="com.hutchind.cordova.plugins.launcher" version="0.2.2" />
+<gap:plugin name="cordova-plugin-app-launcher" version="0.3.1" />
 ```
 For iOS 9+, the following may need to be added so that the URLs used to launch apps can be whitelisted (in this example, customSchemeName:// and fb:// would have been the URLs registered to the apps we want to be able to launch):
 ```xml

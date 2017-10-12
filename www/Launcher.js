@@ -1,6 +1,8 @@
 "use strict";
 function Launcher() {}
 
+Launcher.prototype.FLAG_ACTIVITY_NEW_TASK = 0x10000000;
+
 Launcher.prototype.canLaunch = function (options, successCallback, errorCallback) {
 	options = options || {};
 	options.successCallback = options.successCallback || successCallback;

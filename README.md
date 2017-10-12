@@ -84,6 +84,9 @@ For iOS 9+, the following may need to be added so that the URLs used to launch a
 	</array>
 </gap:config-file>
 ```
+Add following things in your config.xml
+<allow-navigation href="customSchemeName:*">
+<allow-navigation href="fb://*">
 
 ## 3. Usage
 ```javascript

@@ -28,7 +28,7 @@ This plugin allows you to check if an app is installed that can handle a specifi
 ### Automatically (CLI / Plugman)
 
 ```
-$ cordova plugin add https://github.com/nchutchind/cordova-plugin-app-launcher.git
+$ cordova plugin add cordova-plugin-app-launcher --save
 ```
 and then (this step will modify your project):
 ```

@@ -349,17 +349,18 @@ public class Launcher extends CordovaPlugin {
 		final CallbackContext callbackContext = this.callback;
 		cordova.getThreadPool().execute(new LauncherRunnable(this.callback) {
 			public void run() {
-				Intent intent = new Intent(Intent.ACTION_VIEW);
+				PackageManager pm = plugin.webView.getContext().getPackageManager();
+				Intent intent = pm.getLaunchIntentForPackage(packageName);
+				intent.setAction(Intent.ACTION_VIEW);
+
+				// Here I have replaced the below line with above three lines since it was loading the second app inside the first app.
+				// Now it load as a seperate app!
+				// Intent intent = new Intent(Intent.ACTION_VIEW);
 				if (dataType != null) {
 					intent.setDataAndType(Uri.parse(uri), dataType);
 				} else {
 					intent.setData(Uri.parse(uri));
 				}
-
-				if (packageName != null && !packageName.equals("")) {
-					intent.setPackage(packageName);
-				}
-
 				intent.putExtras(extras);
 
 				try {

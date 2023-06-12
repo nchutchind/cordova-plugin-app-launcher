@@ -360,6 +360,8 @@ public class Launcher extends CordovaPlugin {
 					intent.setPackage(packageName);
 				}
 
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
 				intent.putExtras(extras);
 
 				try {
@@ -386,6 +388,7 @@ public class Launcher extends CordovaPlugin {
 				boolean appNotFound = launchIntent == null;
 
 				if (!appNotFound) {
+					launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 					try {
 						launchIntent.putExtras(extras);
 						mycordova.startActivityForResult(plugin, launchIntent, LAUNCH_REQUEST);
@@ -412,6 +415,7 @@ public class Launcher extends CordovaPlugin {
 				if (flags != 0) {
 					intent.setFlags(flags);
 				}
+				// intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // It can be passed on the flags
 				try {
 					intent.putExtras(extras);
 					mycordova.startActivityForResult(plugin, intent, LAUNCH_REQUEST);
@@ -431,6 +435,7 @@ public class Launcher extends CordovaPlugin {
 		cordova.getThreadPool().execute(new LauncherRunnable(this.callback) {
 			public void run() {
 				Intent intent = new Intent(actionName);
+				// intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				try {
 					intent.putExtras(extras);
 					mycordova.startActivityForResult(plugin, intent, LAUNCH_REQUEST);

@@ -34,7 +34,7 @@ import java.util.Set;
 import java.util.HashSet;
 
 public class Launcher extends CordovaPlugin {
-	public static final String TAG = "Launcher Plugin";
+	public static final String TAG = "LauncherPlugin";
 	public static final String ACTION_CAN_LAUNCH = "canLaunch";
 	public static final String ACTION_LAUNCH = "launch";
 	public static final int LAUNCH_REQUEST = 0;
@@ -202,16 +202,16 @@ public class Launcher extends CordovaPlugin {
 			if (options.has("dataType")) {
 				dataType = options.getString("dataType");
 			}
-			launchAppWithData(packageName, options.getString("uri"), dataType, extras);
+			launchAppWithData(packageName, options.getString("uri"), dataType, extras, flags);
 			return true;
 		} else if (options.has("packageName")) {
-			launchApp(options.getString("packageName"), extras);
+			launchApp(options.getString("packageName"), extras, flags);
 			return true;
 		} else if (options.has("uri")) {
 			launchIntent(options.getString("uri"), extras, flags);
 			return true;
 		} else if (options.has("actionName")) {
-			launchAction(options.getString("actionName"), extras);
+			launchAction(options.getString("actionName"), extras, flags);
 			return true;
 		}
 		return false;
@@ -343,7 +343,7 @@ public class Launcher extends CordovaPlugin {
 		return extras;
 	}
 
-	private void launchAppWithData(final String packageName, final String uri, final String dataType, final Bundle extras) throws JSONException {
+	private void launchAppWithData(final String packageName, final String uri, final String dataType, final Bundle extras, final int flags) throws JSONException {
 		final CordovaInterface mycordova = cordova;
 		final CordovaPlugin plugin = this;
 		final CallbackContext callbackContext = this.callback;
@@ -358,6 +358,10 @@ public class Launcher extends CordovaPlugin {
 
 				if (packageName != null && !packageName.equals("")) {
 					intent.setPackage(packageName);
+				}
+
+				if (flags != 0) {
+					intent.addFlags(flags);
 				}
 
 				intent.putExtras(extras);
@@ -375,7 +379,7 @@ public class Launcher extends CordovaPlugin {
 		});
 	}
 
-	private void launchApp(final String packageName, final Bundle extras) {
+	private void launchApp(final String packageName, final Bundle extras, final int flags) {
 		final CordovaInterface mycordova = cordova;
 		final CordovaPlugin plugin = this;
 		Log.i(TAG, "Trying to launch app: " + packageName);
@@ -386,6 +390,9 @@ public class Launcher extends CordovaPlugin {
 				boolean appNotFound = launchIntent == null;
 
 				if (!appNotFound) {
+					if (flags != 0) {
+						launchIntent.addFlags(flags);
+					}
 					try {
 						launchIntent.putExtras(extras);
 						mycordova.startActivityForResult(plugin, launchIntent, LAUNCH_REQUEST);
@@ -410,7 +417,7 @@ public class Launcher extends CordovaPlugin {
 				Intent intent = new Intent(Intent.ACTION_VIEW);
 				intent.setData(Uri.parse(uri));
 				if (flags != 0) {
-					intent.setFlags(flags);
+					intent.addFlags(flags);
 				}
 				try {
 					intent.putExtras(extras);
@@ -425,12 +432,15 @@ public class Launcher extends CordovaPlugin {
 		});
 	}
 
-	private void launchAction(final String actionName, final Bundle extras) {
+	private void launchAction(final String actionName, final Bundle extras, final int flags) {
 		final CordovaInterface mycordova = cordova;
 		final CordovaPlugin plugin = this;
 		cordova.getThreadPool().execute(new LauncherRunnable(this.callback) {
 			public void run() {
 				Intent intent = new Intent(actionName);
+				if (flags != 0) {
+					intent.addFlags(flags);
+				}
 				try {
 					intent.putExtras(extras);
 					mycordova.startActivityForResult(plugin, intent, LAUNCH_REQUEST);

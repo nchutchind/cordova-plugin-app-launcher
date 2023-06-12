@@ -6,10 +6,11 @@ Simple Cordova plugin to see if other apps are installed and launch them.
 ## 0. Index
 1. [Description](#1-description)
 2. [Installation](#2-installation)
-3. [Usage](#3-usage)
-4. [Changelog](#4-changelog)
-5. [Credits](#5-credits)
-6. [License](#6-license)
+3. [Parameters](#3-parameters)
+4. [Usage](#4-usage)
+5. [Changelog](#5-changelog)
+6. [Credits](#6-credits)
+7. [License](#7-license)
 
 ## 1. Description
 
@@ -85,7 +86,84 @@ For iOS 9+, the following may need to be added so that the URLs used to launch a
 </gap:config-file>
 ```
 
-## 3. Usage
+## 3. Parameters
+
+List of parameters that can be passed to `window.plugins.launcher.launch` and `window.plugins.launcher.canLaunch`
+
+**uri**, can be used in `launch` and `canLaunch` (**iOS** and **Android**)
+
+```javascript
+	window.plugins.launcher.launch({
+		uri:'http://nasatv-lh.akamaihd.net/i/NASA_101@319270/master.m3u8',
+	}, successCallback, errorCallback);
+```
+
+**packageName**, can be used in `launch` and `canLaunch` (**Android**)
+
+```javascript
+	window.plugins.launcher.launch({
+		uri:'http://nasatv-lh.akamaihd.net/i/NASA_101@319270/master.m3u8',
+		packageName:'com.mxtech.videoplayer.ad',
+	}, successCallback, errorCallback);
+```
+
+**dataType**, can be used in `launch` and `canLaunch` (**Android**)
+
+```javascript
+	window.plugins.launcher.launch({
+		uri:'http://nasatv-lh.akamaihd.net/i/NASA_101@319270/master.m3u8',
+		packageName:'com.mxtech.videoplayer.ad',
+		dataType:'application/x-mpegURL'
+	}, successCallback, errorCallback);
+```
+
+**flags**, can be used in `launch` (**Android**)
+
+```javascript
+	window.plugins.launcher.launch({
+		uri:'http://nasatv-lh.akamaihd.net/i/NASA_101@319270/master.m3u8',
+		packageName:'com.mxtech.videoplayer.ad',
+		dataType:'application/x-mpegURL',
+		flags: window.plugins.launcher.FLAG_ACTIVITY_NEW_TASK,
+	}, successCallback, errorCallback);
+```
+
+Abailable flags
+
+- **FLAG_ACTIVITY_NEW_TASK**: If set, this activity will become the start of a new task (Open the app in a new activity instead of the current one).
+
+If you are missing some flags, you can use its int value or edit and add it in the file [Launcher.js](https://github.com/nchutchind/cordova-plugin-app-launcher/blob/master/www/Launcher.js) and open a pull request, see all [Intent flags list](https://developer.android.com/reference/android/content/Intent).
+
+**extras**, can be used in `launch` (**Android**)
+
+More info in [Extras Data Types](#extras-data-types) and below.
+
+```javascript
+	window.plugins.launcher.launch({
+		uri:'http://nasatv-lh.akamaihd.net/i/NASA_101@319270/master.m3u8',
+		packageName:'com.mxtech.videoplayer.ad',
+		dataType:'application/x-mpegURL',
+		flags: window.plugins.launcher.FLAG_ACTIVITY_NEW_TASK,
+		extras: [
+			{"name":"position", "value":3000, "dataType":"int"}
+		]
+	}, successCallback, errorCallback);
+```
+
+**getAppList**, can be used in `canLaunch` (**Android**)
+
+`successCallback` data will contain an array named `appList` with the package names of applications that can handle the uri specified.
+
+```javascript
+	window.plugins.launcher.canLaunch({
+		uri:'http://nasatv-lh.akamaihd.net/i/NASA_101@319270/master.m3u8',
+		packageName:'com.mxtech.videoplayer.ad',
+		dataType:'application/x-mpegURL',
+		getAppList: true,
+	}, successCallback, errorCallback);
+```
+
+## 4. Usage
 ```javascript
 	// Default handlers
 	var successCallback = function(data) {
@@ -214,7 +292,7 @@ Check to see if Peek Acuity can be launched via an Action Name (**Android**)
 ```typescript
 	let actionName = 'org.peekvision.intent.action.TEST_ACUITY';
 
-	window["plugins"].launcher.canLaunch({actionName: actionName},
+	window.plugins.launcher.canLaunch({actionName: actionName},
 		data => console.log("Peek Acuity can be launched"),
 		errMsg => console.log("Peek Acuity not installed! " + errMsg)
 	);
@@ -234,7 +312,7 @@ Launch Peek Acuity via an Action Name with Extras and return results (**Android*
 	  {"name":"return_result",	"value":true,		"dataType":"Boolean"}
 	];
 
-	window["plugins"].launcher.launch({actionName: actionName, extras: extras},
+	window.plugins.launcher.launch({actionName: actionName, extras: extras},
 		json => {
 			if (json.isActivityDone) {
 				if (json.data) {
@@ -329,7 +407,7 @@ Activity launched and data returned
 #### Launcher.launch Error Callback Data
 Passes an error message as a string.
 
-## 4. Changelog
+## 5. Changelog
 0.4.0: Android: Added ability to launch with intent. Thanks to [@mmey3k] for the code.
 
 0.2.0: Android: Added ability to launch activity with extras and receive data back from launched app when it is finished.
@@ -340,10 +418,10 @@ Passes an error message as a string.
 
 0.1.0: initial version supporting Android and iOS
 
-## 5. Credits
+## 6. Credits
 Special thanks to [@michael1t](https://github.com/michael1t) for sponsoring the development of the Extras portion of this plugin.
 
-## 6. License
+## 7. License
 
 [The MIT License (MIT)](http://www.opensource.org/licenses/mit-license.html)
 
